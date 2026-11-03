@@ -125,6 +125,37 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* PHP Backend Source */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🖥️ PHP Backend Source Code</h3>
+        <p className="text-gray-600 mb-3">The complete PHP backend is available in the <code className="bg-gray-100 px-1 rounded">/php/</code> directory. This is a production-ready PHP application that can be deployed to any PHP/MySQL server.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+          <a href="/php/README.md" target="_blank" className="p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors">
+            <p className="font-bold text-blue-800">📖 README.md</p>
+            <p className="text-sm text-blue-600">Installation guide & documentation</p>
+          </a>
+          <a href="/php/database/mr_ketan_inventory.sql" target="_blank" className="p-3 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors">
+            <p className="font-bold text-green-800">🗄️ SQL Database File</p>
+            <p className="text-sm text-green-600">Complete schema + demo data</p>
+          </a>
+          <a href="/php/" target="_blank" className="p-3 bg-yellow-50 rounded-lg border border-yellow-200 hover:bg-yellow-100 transition-colors">
+            <p className="font-bold text-yellow-800">🚀 PHP Application</p>
+            <p className="text-sm text-yellow-600">Login page (requires PHP server)</p>
+          </a>
+          <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="font-bold text-gray-800">📁 PHP Files</p>
+            <p className="text-sm text-gray-600">config/, includes/, *.php pages</p>
+          </div>
+        </div>
+        <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+          <p className="text-sm text-yellow-800">
+            <strong>Note:</strong> The PHP application requires a PHP server (Apache/Nginx + MySQL) to run. 
+            For production deployment, copy the <code className="bg-yellow-100 px-1 rounded">/php/</code> folder to your web server and import the SQL file.
+            This React demo works standalone using browser localStorage.
+          </p>
+        </div>
+      </div>
+
       {/* USB Scanner Instructions */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">📱 USB Barcode Scanner Setup</h3>
