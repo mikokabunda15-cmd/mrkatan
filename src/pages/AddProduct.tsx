@@ -53,7 +53,7 @@ export default function AddProduct() {
   }, [editId, isEdit]);
 
   useEffect(() => {
-    if (form.serial_number && /^\d+$/.test(form.serial_number)) {
+    if (form.serial_number && /^[A-Za-z0-9\-_]+$/.test(form.serial_number)) {
       setBarcodePreview(generateBarcodeForProduct(form.serial_number));
     } else {
       setBarcodePreview('');
@@ -74,8 +74,9 @@ export default function AddProduct() {
       return;
     }
 
-    if (!/^\d+$/.test(form.serial_number)) {
-      setError('Serial number must contain only digits.');
+    // Allow alphanumeric serial numbers (e.g. MKS-001, MKS001, etc.)
+    if (!/^[A-Za-z0-9\-_]+$/.test(form.serial_number)) {
+      setError('Serial number must contain only letters, numbers, hyphens or underscores.');
       return;
     }
 
@@ -208,12 +209,12 @@ export default function AddProduct() {
               <input
                 type="text"
                 value={form.serial_number}
-                onChange={(e) => setForm(f => ({ ...f, serial_number: e.target.value.replace(/\D/g, '') }))}
+                onChange={(e) => setForm(f => ({ ...f, serial_number: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg font-mono focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none"
-                placeholder="e.g. 001"
+                placeholder="e.g. MKS-001"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">Digits only. Must be unique.</p>
+              <p className="text-xs text-gray-500 mt-1">Letters, numbers, hyphens. Must be unique (e.g. MKS-001).</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Product Name *</label>

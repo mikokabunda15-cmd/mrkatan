@@ -30,7 +30,7 @@ $where = ["1=1"];
 $params = [];
 
 if ($search) {
-    $where[] = "(s.transaction_reference LIKE ? OR si.product_name LIKE ?)";
+    $where[] = "(s.transaction_reference LIKE ? OR p.product_name LIKE ?)";
     $s = "%$search%";
     $params = array_merge($params, [$s, $s]);
 }
@@ -46,14 +46,14 @@ elseif ($date_filter === 'custom' && $date_from && $date_to) {
 }
 
 $where_clause = implode(' AND ', $where);
-$sql = "SELECT DISTINCT s.* FROM sales s LEFT JOIN sale_items si ON s.id = si.sale_id WHERE $where_clause ORDER BY s.created_at DESC";
+$sql = "SELECT DISTINCT s.* FROM sales s LEFT JOIN sale_items si ON s.id = si.sale_id LEFT JOIN products p ON si.product_id = p.id WHERE $where_clause ORDER BY s.created_at DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $sales = $stmt->fetchAll();
 
-// Get sale items for each sale
+// Get sale items for each sale (with product details via JOIN)
 foreach ($sales as &$sale) {
-    $stmt = $pdo->prepare("SELECT si.*, p.serial_number FROM sale_items si LEFT JOIN products p ON si.product_id = p.id WHERE si.sale_id = ?");
+    $stmt = $pdo->prepare("SELECT si.*, p.product_name, p.serial_number FROM sale_items si LEFT JOIN products p ON si.product_id = p.id WHERE si.sale_id = ?");
     $stmt->execute([$sale['id']]);
     $sale['items'] = $stmt->fetchAll();
 }

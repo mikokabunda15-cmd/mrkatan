@@ -22,7 +22,7 @@ $sales_params = [];
 if ($date_from) { $sales_where .= " AND DATE(s.created_at) >= ?"; $sales_params[] = $date_from; }
 if ($date_to) { $sales_where .= " AND DATE(s.created_at) <= ?"; $sales_params[] = $date_to; }
 
-$sales_sql = "SELECT s.*, si.product_name, si.quantity, si.unit_price, si.subtotal, p.category_id, c.category_name 
+$sales_sql = "SELECT s.*, p.product_name, p.serial_number, si.quantity, si.unit_price, si.subtotal, si.product_id, p.category_id, c.category_name 
               FROM sales s JOIN sale_items si ON s.id = si.sale_id 
               LEFT JOIN products p ON si.product_id = p.id LEFT JOIN categories c ON p.category_id = c.id 
               WHERE $sales_where ORDER BY s.created_at DESC";

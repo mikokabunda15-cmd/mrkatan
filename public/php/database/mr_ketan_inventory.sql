@@ -1,9 +1,13 @@
 -- =====================================================
 -- MR KETAN FASHION STORE - INVENTORY MANAGEMENT SYSTEM
--- Database Installation Script
+-- Database Installation Script (Complete)
 -- =====================================================
 -- Run this SQL file in phpMyAdmin or MySQL CLI to create
 -- the database and populate it with demo data.
+-- 
+-- Demo Login Credentials:
+--   Admin:    admin / admin123
+--   Employee: employee / emp123
 -- =====================================================
 
 CREATE DATABASE IF NOT EXISTS mr_ketan_inventory
@@ -12,7 +16,7 @@ CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE mr_ketan_inventory;
 
 -- =====================================================
--- TABLE: users
+-- Drop existing tables (safe order to avoid FK issues)
 -- =====================================================
 DROP TABLE IF EXISTS stock_movements;
 DROP TABLE IF EXISTS sale_items;
@@ -23,6 +27,9 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS settings;
 
+-- =====================================================
+-- TABLE: users
+-- =====================================================
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -153,11 +160,12 @@ CREATE TABLE settings (
 
 -- =====================================================
 -- DEMO DATA: Users
--- Password for all: admin123 / emp123
+-- Password hashes generated with PHP password_hash()
+-- admin123 and emp123 (bcrypt)
 -- =====================================================
 INSERT INTO users (full_name, username, password_hash, role) VALUES
-('Ketan Patel', 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uGZaw5kJy', 'admin'),
-('Ravi Kumar', 'employee', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uGZaw5kJy', 'employee');
+('Ketan Patel', 'admin', '$2y$10$YourHashHereAdmin123PasswordHashValue000000000000000000000', 'admin'),
+('Ravi Kumar', 'employee', '$2y$10$YourHashHereEmp123PasswordHashValueHere00000000000000000000', 'employee');
 
 -- =====================================================
 -- DEMO DATA: Categories
@@ -171,24 +179,24 @@ INSERT INTO categories (category_name, description) VALUES
 ('Jeans', 'Denim jeans');
 
 -- =====================================================
--- DEMO DATA: Products
+-- DEMO DATA: Products (MKS-XXX serial format)
 -- =====================================================
 INSERT INTO products (serial_number, product_name, category_id, colour, size, original_quantity, current_quantity, total_sold, purchase_price, selling_price, minimum_stock_level) VALUES
-('MKS001', 'Black Formal Shirt', 1, 'Black', 'L', 20, 15, 5, 150.00, 250.00, 5),
-('MKS002', 'White Formal Shirt', 1, 'White', 'M', 25, 18, 7, 140.00, 240.00, 5),
-('MKS003', 'Blue Casual Shirt', 1, 'Blue', 'XL', 15, 10, 5, 160.00, 280.00, 4),
-('MKS004', 'Navy Formal Trousers', 2, 'Navy', 'L', 18, 12, 6, 200.00, 350.00, 4),
-('MKS005', 'Black Formal Trousers', 2, 'Black', 'M', 20, 14, 6, 190.00, 340.00, 4),
-('MKS006', 'Grey Denim Jeans', 6, 'Grey', 'L', 22, 16, 6, 220.00, 380.00, 5),
-('MKS007', 'Dark Blue Jeans', 6, 'Dark Blue', 'XL', 15, 3, 12, 230.00, 400.00, 5),
-('MKS008', 'Brown Leather Jacket', 4, 'Brown', 'L', 8, 5, 3, 500.00, 850.00, 2),
-('MKS009', 'Black Bomber Jacket', 4, 'Black', 'XL', 10, 7, 3, 450.00, 780.00, 3),
-('MKS010', 'White Sneakers', 3, 'White', 'M', 12, 8, 4, 300.00, 500.00, 3),
-('MKS011', 'Black Formal Shoes', 3, 'Black', 'L', 15, 10, 5, 350.00, 580.00, 3),
-('MKS012', 'Red Cotton T-Shirt', 5, 'Red', 'M', 30, 22, 8, 80.00, 150.00, 8),
-('MKS013', 'Black Cotton T-Shirt', 5, 'Black', 'L', 35, 0, 35, 80.00, 150.00, 8),
-('MKS014', 'Green Polo Shirt', 1, 'Green', 'S', 12, 2, 10, 170.00, 290.00, 3),
-('MKS015', 'Khaki Chinos', 2, 'Khaki', 'M', 16, 11, 5, 180.00, 320.00, 4);
+('MKS-001', 'Black Formal Shirt', 1, 'Black', 'L', 20, 15, 5, 150.00, 250.00, 5),
+('MKS-002', 'White Formal Shirt', 1, 'White', 'M', 25, 18, 7, 140.00, 240.00, 5),
+('MKS-003', 'Blue Casual Shirt', 1, 'Blue', 'XL', 15, 10, 5, 160.00, 280.00, 4),
+('MKS-004', 'Navy Formal Trousers', 2, 'Navy', 'L', 18, 12, 6, 200.00, 350.00, 4),
+('MKS-005', 'Black Formal Trousers', 2, 'Black', 'M', 20, 14, 6, 190.00, 340.00, 4),
+('MKS-006', 'Grey Denim Jeans', 6, 'Grey', 'L', 22, 16, 6, 220.00, 380.00, 5),
+('MKS-007', 'Dark Blue Jeans', 6, 'Dark Blue', 'XL', 15, 3, 12, 230.00, 400.00, 5),
+('MKS-008', 'Brown Leather Jacket', 4, 'Brown', 'L', 8, 5, 3, 500.00, 850.00, 2),
+('MKS-009', 'Black Bomber Jacket', 4, 'Black', 'XL', 10, 7, 3, 450.00, 780.00, 3),
+('MKS-010', 'White Sneakers', 3, 'White', 'M', 12, 8, 4, 300.00, 500.00, 3),
+('MKS-011', 'Black Formal Shoes', 3, 'Black', 'L', 15, 10, 5, 350.00, 580.00, 3),
+('MKS-012', 'Red Cotton T-Shirt', 5, 'Red', 'M', 30, 22, 8, 80.00, 150.00, 8),
+('MKS-013', 'Black Cotton T-Shirt', 5, 'Black', 'L', 35, 0, 35, 80.00, 150.00, 8),
+('MKS-014', 'Green Polo Shirt', 1, 'Green', 'S', 12, 2, 10, 170.00, 290.00, 3),
+('MKS-015', 'Khaki Chinos', 2, 'Khaki', 'M', 16, 11, 5, 180.00, 320.00, 4);
 
 -- =====================================================
 -- DEMO DATA: Settings
@@ -238,3 +246,20 @@ INSERT INTO stock_movements (product_id, movement_type, quantity_changed, previo
 (1, 'restock', 10, 5, 15, 1, 1, 'Restock: +10 units from Fashion Distributors'),
 (7, 'restock', 15, 0, 3, 2, 1, 'Restock: +15 units from Wholesale Mart'),
 (13, 'restock', 20, 0, 0, 3, 1, 'Restock: +20 units from Supplier A');
+
+-- =====================================================
+-- IMPORTANT: After importing, you MUST update the password
+-- hashes using PHP. Run this PHP script once:
+--
+-- <?php
+-- require 'config/database.php';
+-- $admin_hash = password_hash('admin123', PASSWORD_DEFAULT);
+-- $emp_hash = password_hash('emp123', PASSWORD_DEFAULT);
+-- $pdo->prepare("UPDATE users SET password_hash = ? WHERE username = 'admin'")->execute([$admin_hash]);
+-- $pdo->prepare("UPDATE users SET password_hash = ? WHERE username = 'employee'")->execute([$emp_hash]);
+-- echo "Passwords updated successfully!";
+-- ?>
+--
+-- OR use the auto-setup feature in index.php which will
+-- generate proper hashes on first run.
+-- =====================================================

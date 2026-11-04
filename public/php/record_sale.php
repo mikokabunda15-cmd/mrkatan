@@ -13,7 +13,8 @@ $user = current_user();
 if (isset($_GET['ajax']) && $_GET['ajax'] === 'lookup') {
     header('Content-Type: application/json');
     $serial = trim($_GET['serial'] ?? '');
-    $serial = preg_replace('/\D/', '', $serial);
+    // Keep full serial number (alphanumeric, hyphens, underscores)
+    $serial = preg_replace('/[^A-Za-z0-9\-_]/', '', $serial);
     
     if (empty($serial)) {
         echo json_encode(['error' => 'Please enter a serial number.']);

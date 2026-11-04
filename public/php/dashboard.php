@@ -17,7 +17,7 @@ $stmt->execute([$low_threshold]);
 $low_stock_products = $stmt->fetchAll();
 
 // Recent activities
-$recent_sales = $pdo->query("SELECT s.*, si.product_name, si.quantity FROM sales s JOIN sale_items si ON s.id = si.sale_id WHERE s.status = 'completed' ORDER BY s.created_at DESC LIMIT 5")->fetchAll();
+$recent_sales = $pdo->query("SELECT s.*, p.product_name, si.quantity FROM sales s JOIN sale_items si ON s.id = si.sale_id JOIN products p ON si.product_id = p.id WHERE s.status = 'completed' ORDER BY s.created_at DESC LIMIT 5")->fetchAll();
 $recent_restocks = $pdo->query("SELECT r.*, p.product_name FROM restocks r JOIN products p ON r.product_id = p.id ORDER BY r.created_at DESC LIMIT 3")->fetchAll();
 
 include __DIR__ . '/includes/header.php';
