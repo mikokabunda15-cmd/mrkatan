@@ -34,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validation
     if (empty($serial) || empty($name) || empty($colour) || !$category_id || !$original_qty) {
         $error = 'Please fill in all required fields.';
-    } elseif (!ctype_digit($serial)) {
-        $error = 'Serial number must contain only digits.';
+    } elseif (!preg_match('/^[A-Za-z0-9\-_]+$/', $serial)) {
+        $error = 'Serial number must contain only letters, numbers, hyphens or underscores.';
     } else {
         // Check duplicate serial
         $stmt = $pdo->prepare("SELECT id FROM products WHERE serial_number = ? AND id != ?");
@@ -123,8 +123,8 @@ include __DIR__ . '/includes/sidebar.php';
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Serial Number *</label>
                     <input type="text" name="serial_number" value="<?php echo e($form['serial_number']); ?>"
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg font-mono focus:ring-2 focus:ring-yellow-500 outline-none"
-                           placeholder="e.g. 001" required>
-                    <p class="text-xs text-gray-500 mt-1">Digits only. Must be unique.</p>
+                           placeholder="e.g. MKS-001" required>
+                    <p class="text-xs text-gray-500 mt-1">Letters, numbers, hyphens. Must be unique (e.g. MKS-001).</p>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Product Name *</label>

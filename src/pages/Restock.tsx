@@ -36,7 +36,7 @@ export default function Restock() {
 
     if (!scanInput.trim()) return;
 
-    const serial = scanInput.trim().replace(/\D/g, '');
+    const serial = scanInput.trim();
     const found = db.getProductBySerial(serial);
 
     if (!found || found.archived) {

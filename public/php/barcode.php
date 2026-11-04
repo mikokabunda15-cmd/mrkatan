@@ -46,7 +46,7 @@ $store_name = get_setting($pdo, 'store_name', 'Mr Ketan Fashion Store');
     </div>
 
     <script>
-    // Code 128 Barcode Generator
+    // Code 128B Barcode Generator - supports full ASCII (letters, numbers, symbols)
     const P = "212222,222122,222221,121223,121322,131222,122213,122312,132212,221213,221312,231212,112232,122132,122231,113222,123122,123221,223211,221132,221231,213212,223112,312131,311222,321122,321221,312212,322112,322211,212123,212321,232121,111323,131123,131321,112313,132113,132311,211313,231113,231311,112133,112331,132131,113123,113321,133121,313121,211331,231131,213113,213311,213131,311123,311321,331121,312113,312311,332111,314111,221411,431111,111224,111422,121124,121421,141122,141221,112214,112412,122114,122411,142112,142211,241211,221114,413111,241112,134111,111242,121142,121241,114212,124112,124211,411212,421112,421211,212141,214121,412121,111143,111341,131141,114113,114311,411113,411311,113141,114131,311141,411131,211412,211214,211232,2331112".split(",");
 
     function pat(i) {
@@ -55,24 +55,26 @@ $store_name = get_setting($pdo, 'store_name', 'Mr Ketan Fashion Store');
         return out;
     }
 
-    function code128(d) {
-        const v = []; const n = d.length;
-        if (n === 1) { v.push(104, 16 + +d); }
-        else {
-            v.push(105);
-            const pairs = n - (n % 2);
-            for (let i = 0; i < pairs; i += 2) v.push(+d.substr(i, 2));
-            if (n % 2) v.push(100, 16 + +d[n - 1]);
+    // Code 128B encoding - supports all printable ASCII (chars 32-127)
+    function encodeCode128B(data) {
+        const values = [];
+        values.push(104); // Start Code B
+        for (let i = 0; i < data.length; i++) {
+            const c = data.charCodeAt(i);
+            if (c >= 32 && c <= 127) values.push(c - 32);
+            else values.push(0); // space for non-printable
         }
-        let sum = v[0];
-        for (let i = 1; i < v.length; i++) sum += i * v[i];
-        v.push(sum % 103, 106);
-        return v.map(pat).join("");
+        let checksum = values[0];
+        for (let i = 1; i < values.length; i++) checksum += i * values[i];
+        values.push(checksum % 103);
+        values.push(106); // Stop code
+        return values.map(pat).join("");
     }
 
-    const serial = "<?php echo $product['serial_number']; ?>";
-    const digits = serial.replace(/\D/g, "") || "000000";
-    const bits = code128(digits);
+    const serial = "<?php echo addslashes($product['serial_number']); ?>";
+    // Use the FULL serial number - do NOT strip any characters
+    const data = serial || "000000";
+    const bits = encodeCode128B(data);
     const scale = 3, height = 100, quiet = 10, pad = 8;
     const textH = 30;
     const W = (bits.length + quiet * 2) * scale;
@@ -100,11 +102,11 @@ $store_name = get_setting($pdo, 'store_name', 'Mr Ketan Fashion Store');
     ctx.font = fs + "px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText(digits, W / 2, pad + height + 8);
+    ctx.fillText(data, W / 2, pad + height + 8);
 
     function downloadBarcode() {
         const link = document.createElement("a");
-        link.download = "barcode-<?php echo $product['serial_number']; ?>.png";
+        link.download = "barcode-<?php echo urlencode($product['serial_number']); ?>.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
     }

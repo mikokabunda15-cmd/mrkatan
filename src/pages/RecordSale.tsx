@@ -36,7 +36,7 @@ export default function RecordSale() {
 
     if (!scanInput.trim()) return;
 
-    const serial = scanInput.trim().replace(/\D/g, '');
+    const serial = scanInput.trim();
     const product = db.getProductBySerial(serial);
 
     if (!product || product.archived) {

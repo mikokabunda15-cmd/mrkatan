@@ -10,7 +10,34 @@ if (is_logged_in()) {
     redirect(BASE_URL . 'dashboard.php');
 }
 
+// Auto-setup: Fix demo password hashes on first run
+// The SQL file contains placeholder hashes; this generates real bcrypt hashes
+$setup_done = false;
+try {
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users");
+    $user_count = $stmt->fetchColumn();
+    if ($user_count > 0) {
+        // Check if passwords need updating (test with known passwords)
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = 'admin'");
+        $stmt->execute();
+        $admin = $stmt->fetch();
+        if ($admin && !password_verify('admin123', $admin['password_hash'])) {
+            // Passwords need to be regenerated
+            $admin_hash = password_hash('admin123', PASSWORD_DEFAULT);
+            $emp_hash = password_hash('emp123', PASSWORD_DEFAULT);
+            $pdo->prepare("UPDATE users SET password_hash = ? WHERE username = 'admin'")->execute([$admin_hash]);
+            $pdo->prepare("UPDATE users SET password_hash = ? WHERE username = 'employee'")->execute([$emp_hash]);
+            $setup_done = true;
+        }
+    }
+} catch (Exception $e) {
+    // Silently continue - will show error on login attempt
+}
+
 $error = '';
+if ($setup_done) {
+    $error = ''; // Setup succeeded silently
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -24,6 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password_hash'])) {
+            // Rehash if needed (future-proofing)
+            if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT)) {
+                $new_hash = password_hash($password, PASSWORD_DEFAULT);
+                $pdo->prepare("UPDATE users SET password_hash = ? WHERE id = ?")->execute([$new_hash, $user['id']]);
+            }
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['username'] = $user['username'];

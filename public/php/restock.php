@@ -155,7 +155,7 @@ document.getElementById('restockScan')?.addEventListener('keypress', function(e)
 });
 
 function findProduct() {
-    const serial = document.getElementById('restockScan').value.trim().replace(/\D/g, '');
+    const serial = document.getElementById('restockScan').value.trim().replace(/[^A-Za-z0-9\-_]/g, '');
     if (!serial) return;
     
     fetch('<?php echo BASE_URL; ?>record_sale.php?ajax=lookup&serial=' + encodeURIComponent(serial))
